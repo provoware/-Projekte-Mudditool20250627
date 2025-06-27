@@ -1,6 +1,6 @@
 # -Projekte-Mudditool20250627
 
-Mudditool ist ein kleines Hilfsprogramm mit mehreren Python-Modulen und einer optionalen Electron-Oberfläche. Es erleichtert den Umgang mit Dateien, Medien und weiteren Werkzeugen.
+Mudditool (in den Modulen auch "Mudschikato" genannt) ist ein kleines Hilfsprogramm mit mehreren Python-Modulen und einer optionalen Electron-Oberfläche. Es erleichtert den Umgang mit Dateien, Medien und weiteren Werkzeugen.
 
 ## Installation
 
@@ -13,6 +13,10 @@ Mudditool ist ein kleines Hilfsprogramm mit mehreren Python-Modulen und einer op
 3. Für die Electron-Oberfläche Node-Pakete installieren:
    ```bash
    npm install
+   ```
+4. Electron-GUI starten:
+   ```bash
+   npm start
    ```
 
 ## Nutzung
@@ -36,4 +40,10 @@ Jedes Modul lässt sich auch einzeln ausführen.
 - Nutze virtuelle Umgebungen, um Abhängigkeitskonflikte zu vermeiden.
 - Passe die Log-Stufe in `logging_mudschikato.py` nach Bedarf an.
 - Dokumentiere deine Änderungen regelmäßig mit sinnvollen Git-Commits.
+- Lege eine `.gitignore` an, damit Logdateien und `node_modules` nicht versioniert werden.
+- Pflege `requirements.txt`, falls du weitere Bibliotheken nutzt.
+
+## Lizenz
+
+Dieses Projekt steht unter der MIT-Lizenz. Siehe die Datei `LICENSE` für Details.
 
