@@ -1,0 +1,30 @@
+Mudschikato-Struktur & Hilfstool 2025 – Basis-Ausrollversion 04
+
+Datum: 2025-06-27
+
+-------------------------------------------
+logging_mudschikato.py
+- Erstes robustes Logging-Modul (Datei + Konsole)
+- Zeitstempel, Typ, Kontext, Fehlerhandling
+
+undo_mudschikato.py
+- UndoManager für bis zu 5 Aktionen
+- UndoAction-Objekte mit Callback-Prinzip
+
+contextmenu_mudschikato.py
+- Kontextmenü für Dateilisten
+- Undo- und Logging-fähig
+- Datei-Löschen mit Undo-Wiederherstellung
+- Info-Funktion für jedes Listenelement
+
+feedback_mudschikato.py
+- Feedback- und Notizmodul
+- Notizen persistent speichern, Undo für letzte 5 Einträge
+- Logging aller Aktionen
+- Einfache, übersichtliche GUI
+
+-------------------------------------------
+Bekannte Einschränkungen:
+- Undo für Dateien nur in Listen, keine echte File-Restore
+- GUI-Module benötigen PyQt6
+- Noch keine Integration in ein zentrales Hauptfenster

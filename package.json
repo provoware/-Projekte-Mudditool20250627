@@ -1,0 +1,17 @@
+{
+  "name": "mudditool",
+  "version": "1.0.0",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test:gui": "playwright test --project=chromium"
+  },
+  "dependencies": {
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.53.1",
+    "electron": "^26.6.10",
+    "playwright": "^1.53.1"
+  }
+}

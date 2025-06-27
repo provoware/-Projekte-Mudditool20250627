@@ -1,0 +1,13 @@
+[2025-06-27 16:00:54] [INFO] [logging_mudschikato] Mudschikato-Logging initialisiert.
+[2025-06-27 16:00:54] [SUCCESS] [logging_mudschikato] Test: Datei wurde erfolgreich erstellt.
+[2025-06-27 16:00:54] [ERROR] [main] Test: Dummy-Fehler aufgetreten.
+[2025-06-27 16:01:07] [INFO] [logging_mudschikato] Mudschikato-Logging initialisiert.
+[2025-06-27 16:01:07] [SUCCESS] [logging_mudschikato] Test: Datei wurde erfolgreich erstellt.
+[2025-06-27 16:01:07] [ERROR] [main] Test: Dummy-Fehler aufgetreten.
+2025-06-27 16:36:04,610 INFO: FeedbackApp gestartet
+2025-06-27 16:36:23,742 INFO: Notiz hinzugefügt: "1. erfolgreiche Test"
+2025-06-27 16:36:23,743 INFO: 1 Notizen gespeichert
+2025-06-27 16:37:03,787 INFO: Notiz hinzugefügt: "Hier schreibt Mama dann immer, die Dinge rein, die Kasi dann hier machen soll... !"
+2025-06-27 16:37:03,788 INFO: 2 Notizen gespeichert
+2025-06-27 16:37:10,363 INFO: 2 Notizen gespeichert
+2025-06-27 16:37:10,364 INFO: FeedbackApp beendet
