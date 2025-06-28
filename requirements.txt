@@ -1,0 +1,6 @@
+PyQt6
+pygame
+psutil
+flake8
+black
+pytest
