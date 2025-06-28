@@ -10,12 +10,13 @@ Einfacher Medienplayer mit Playlist, Undo und persistenter Speicherung.
 """
 
 import os
-import pygame
+import sys
 from PyQt6.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QListWidget, QPushButton,
     QFileDialog, QSlider, QLabel, QMessageBox
 )
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import Qt, QTimer, QUrl
+from PyQt6.QtMultimedia import QMediaPlayer, QAudioOutput
 from logging_mudschikato import log_event
 from undo_mudschikato import UndoManager, UndoAction
 
@@ -87,11 +88,14 @@ class MediaPlayerWidget(QWidget):
         self.setLayout(self.layout)
 
         # Audio-Init
-        pygame.mixer.init()
+        self.player = QMediaPlayer()
+        self.audio_output = QAudioOutput()
+        self.player.setAudioOutput(self.audio_output)
         self.current_index = -1
         self.is_paused = False
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(self.update_position)
+        self.player.mediaStatusChanged.connect(self.handle_media_status)
 
         # Playlist laden
         self.load_playlist()
@@ -141,3 +145,111 @@ class MediaPlayerWidget(QWidget):
             self.playlist.insertItem(row - 1, item)
             self.playlist.setCurrentRow(row - 1)
             self.save_playlist()
+            log_event(f"Song nach oben verschoben: {item.text()}", "MediaPlayer", "INFO")
+
+            def undo(item=item, orig=row):
+                idx = self.playlist.row(item)
+                if idx != -1:
+                    self.playlist.takeItem(idx)
+                    self.playlist.insertItem(orig, item)
+                    self.playlist.setCurrentRow(orig)
+                    self.save_playlist()
+                    log_event(f"Song-Zurückverschiebung (Undo): {item.text()}", "MediaPlayer", "UNDO")
+            self.undo_manager.add(UndoAction(undo, description="Song hoch verschoben"))
+
+    def move_down(self):
+        row = self.playlist.currentRow()
+        if row < self.playlist.count() - 1 and row >= 0:
+            item = self.playlist.takeItem(row)
+            self.playlist.insertItem(row + 1, item)
+            self.playlist.setCurrentRow(row + 1)
+            self.save_playlist()
+            log_event(f"Song nach unten verschoben: {item.text()}", "MediaPlayer", "INFO")
+
+            def undo(item=item, orig=row):
+                idx = self.playlist.row(item)
+                if idx != -1:
+                    self.playlist.takeItem(idx)
+                    self.playlist.insertItem(orig, item)
+                    self.playlist.setCurrentRow(orig)
+                    self.save_playlist()
+                    log_event(f"Song-Zurückverschiebung (Undo): {item.text()}", "MediaPlayer", "UNDO")
+            self.undo_manager.add(UndoAction(undo, description="Song runter verschoben"))
+
+    def play_selected(self):
+        if self.playlist.count() == 0:
+            QMessageBox.information(self, "Info", "Playlist ist leer.")
+            return
+        idx = self.playlist.currentRow()
+        if idx < 0:
+            idx = 0
+            self.playlist.setCurrentRow(0)
+        self.current_index = idx
+        filepath = self.playlist.item(idx).text()
+        self.player.setSource(QUrl.fromLocalFile(filepath))
+        self.player.play()
+        self.is_paused = False
+        self.update_timer.start(500)
+        log_event(f"Abspielen: {filepath}", "MediaPlayer", "INFO")
+
+    def play_next(self):
+        if self.playlist.count() == 0:
+            return
+        next_idx = (self.current_index + 1) % self.playlist.count()
+        self.playlist.setCurrentRow(next_idx)
+        self.play_selected()
+
+    def play_prev(self):
+        if self.playlist.count() == 0:
+            return
+        prev_idx = (self.current_index - 1) % self.playlist.count()
+        self.playlist.setCurrentRow(prev_idx)
+        self.play_selected()
+
+    def pause_audio(self):
+        state = self.player.playbackState()
+        if state == QMediaPlayer.PlaybackState.PlayingState:
+            self.player.pause()
+            self.is_paused = True
+        elif state == QMediaPlayer.PlaybackState.PausedState:
+            self.player.play()
+            self.is_paused = False
+
+    def update_position(self):
+        pos = self.player.position() // 1000
+        self.label_pos.setText(f"Position: {pos // 60:02d}:{pos % 60:02d}")
+
+    def set_volume(self):
+        vol = self.slider_vol.value() / 100
+        self.audio_output.setVolume(vol)
+
+    def save_playlist(self):
+        with open(PLAYLISTDATEI, "w", encoding="utf-8") as f:
+            for i in range(self.playlist.count()):
+                f.write(self.playlist.item(i).text() + "\n")
+
+    def load_playlist(self):
+        self.playlist.clear()
+        if not os.path.exists(PLAYLISTDATEI):
+            return
+        with open(PLAYLISTDATEI, "r", encoding="utf-8") as f:
+            for line in f:
+                path = line.strip()
+                if path:
+                    self.playlist.addItem(path)
+
+    def undo_action(self):
+        result = self.undo_manager.undo()
+        QMessageBox.information(self, "Undo", result)
+
+    def handle_media_status(self, status):
+        if status == QMediaPlayer.MediaStatus.EndOfMedia:
+            self.play_next()
+
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    undo_mgr = UndoManager()
+    win = MediaPlayerWidget(undo_mgr)
+    win.show()
+    sys.exit(app.exec())
