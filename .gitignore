@@ -1,0 +1,4 @@
+# Ignore local environment files
+node_modules/
+__pycache__/
+*.pyc
