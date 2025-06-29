@@ -40,4 +40,20 @@ class DateiListe(QListWidget):
 
     def delete_item(self, item):
         name = item.text()
-        idx = self.row(
+        idx = self.row(item)
+        self.takeItem(idx)
+        log_event(f"Datei gelöscht: {name}", "DateiListe", "INFO")
+
+        def undo():
+            self.insertItem(idx, name)
+            log_event(f"Datei wiederhergestellt (Undo): {name}", "DateiListe", "UNDO")
+
+        self.undo_manager.add(UndoAction(undo, description=f"Datei {name} gelöscht"))
+
+    def show_info(self, item):
+        QMessageBox.information(
+            self,
+            "Datei-Info",
+            f"Name: {item.text()}\nPosition: {self.row(item)}",
+        )
+
